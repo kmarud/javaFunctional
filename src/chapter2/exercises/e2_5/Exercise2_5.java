@@ -1,4 +1,4 @@
-package chapter2.exercises.exercise2_5;
+package chapter2.exercises.e2_5;
 
 import common.Function;
 
