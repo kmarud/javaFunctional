@@ -8,8 +8,5 @@ public class Exercise2_12 {
         return n == 0 ? 1 : n * factorialMethod(n-1);
     }
 
-    static Function<Integer, Integer> factorial;
-    static {
-        factorial = x -> x == 0 ? 1 : x * factorial.apply(x - 1);
-    }
+    static final Function<Integer, Integer> factorial = x -> x == 0 ? 1 : x * Exercise2_12.factorial.apply(x - 1);
 }
