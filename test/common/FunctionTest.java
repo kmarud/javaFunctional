@@ -1,34 +1,27 @@
 package common;
 
-import org.junit.Before;
 import org.junit.Test;
 
-import java.util.function.IntUnaryOperator;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class FunctionTest {
     final Function<Integer, Integer> triple = x -> x * 3;
     final Function<Integer, Integer> square = x -> x * x;
 
-    Integer squaredAndThenTrippled(int arg){
+    Integer squaredAndThenTrippled(int arg) {
         return (arg * arg) * 3;
     }
 
-    Integer tripledAndThenSquared(int arg){
+    Integer tripledAndThenSquared(int arg) {
         return (arg * 3) * (arg * 3);
     }
 
-    @Before
-    public void prepare(){
-
-
-    }
     @Test
     public void composeOneParameterTest() {
         Integer value = triple.compose(square).apply(3);
         assertEquals(squaredAndThenTrippled(3), value);
     }
+
     @Test
     public void composeOneParameterTest2() {
         Function<Integer, Integer> f = triple.compose(square);
@@ -49,14 +42,14 @@ public class FunctionTest {
 
     @Test
     public void identity() {
-        Function<Integer,Integer> as = Function.identity();
+        Function<Integer, Integer> as = Function.identity();
         assertEquals(Integer.valueOf(4), as.apply(4));
         assertEquals(Integer.valueOf(46), as.apply(46));
     }
 
     @Test
     public void composeTwoParametersTest1() {
-        Integer x = Function.compose(triple,square).apply(3);
+        Integer x = Function.compose(triple, square).apply(3);
         assertEquals(squaredAndThenTrippled(3), x);
         Integer y = Function.compose(square, triple).apply(3);
         assertEquals(tripledAndThenSquared(3), y);
@@ -64,7 +57,7 @@ public class FunctionTest {
 
     @Test
     public void composeTwoParametersTest2() {
-        Function<Integer, Integer> x = Function.compose(triple,square);
+        Function<Integer, Integer> x = Function.compose(triple, square);
         assertEquals(squaredAndThenTrippled(3), x.apply(3));
         Function<Integer, Integer> y = Function.compose(square, triple);
         assertEquals(tripledAndThenSquared(3), y.apply(3));
@@ -72,7 +65,7 @@ public class FunctionTest {
 
     @Test
     public void andThenTwoParametersTest1() {
-        Integer x = Function.andThen(triple,square).apply(3);
+        Integer x = Function.andThen(triple, square).apply(3);
         assertEquals(tripledAndThenSquared(3), x);
         Integer y = Function.andThen(square, triple).apply(3);
         assertEquals(squaredAndThenTrippled(3), y);
@@ -80,7 +73,7 @@ public class FunctionTest {
 
     @Test
     public void andThenTwoParametersTest2() {
-        Function<Integer, Integer> x = Function.andThen(triple,square);
+        Function<Integer, Integer> x = Function.andThen(triple, square);
         assertEquals(tripledAndThenSquared(3), x.apply(3));
         Function<Integer, Integer> y = Function.andThen(square, triple);
         assertEquals(squaredAndThenTrippled(3), y.apply(3));
@@ -102,12 +95,12 @@ public class FunctionTest {
                 Function<Function<Integer, Integer>,
                         Function<Integer, Integer>>> f = Function.compose();
 
-        Function<Integer, Integer> g= f.apply(triple).apply(square);
+        Function<Integer, Integer> g = f.apply(triple).apply(square);
         assertEquals(tripledAndThenSquared(3), g.apply(3));
     }
 
     @Test
-    public void andThenNoParameterTest1(){
+    public void andThenNoParameterTest1() {
         Function<Function<Integer, Integer>,
                 Function<Function<Integer, Integer>,
                         Function<Integer, Integer>>> f = Function.andThen();
@@ -117,12 +110,12 @@ public class FunctionTest {
     }
 
     @Test
-    public void andThenNoParameterTest2(){
+    public void andThenNoParameterTest2() {
         Function<Function<Integer, Integer>,
                 Function<Function<Integer, Integer>,
                         Function<Integer, Integer>>> f = Function.andThen();
 
-       Function<Integer, Integer> g = f.apply(triple).apply(square);
+        Function<Integer, Integer> g = f.apply(triple).apply(square);
         assertEquals(squaredAndThenTrippled(3), g.apply(3));
     }
 
@@ -132,7 +125,7 @@ public class FunctionTest {
                 Function<Function<Integer, Integer>,
                         Function<Integer, Integer>>> f = Function.higherAndThen();
         Integer g = f.apply(triple).apply(square).apply(3);
-        assertEquals(tripledAndThenSquared(3), g );
+        assertEquals(tripledAndThenSquared(3), g);
     }
 
     @Test
@@ -145,7 +138,7 @@ public class FunctionTest {
 
         Function<Integer, Integer> g = f.apply(triple).apply(square);
 
-        assertEquals(tripledAndThenSquared(3), g.apply(3) );
+        assertEquals(tripledAndThenSquared(3), g.apply(3));
         assertEquals(tripledAndThenSquared(3), h.apply(square).apply(3));
     }
 
@@ -155,7 +148,7 @@ public class FunctionTest {
                 Function<Function<Integer, Integer>,
                         Function<Integer, Integer>>> f = Function.higherCompose();
         Integer g = f.apply(triple).apply(square).apply(3);
-        assertEquals(squaredAndThenTrippled(3), g );
+        assertEquals(squaredAndThenTrippled(3), g);
     }
 
     @Test
@@ -168,7 +161,27 @@ public class FunctionTest {
 
         Function<Integer, Integer> g = f.apply(triple).apply(square);
 
-        assertEquals(squaredAndThenTrippled(3), g.apply(3) );
+        assertEquals(squaredAndThenTrippled(3), g.apply(3));
         assertEquals(squaredAndThenTrippled(3), h.apply(square).apply(3));
+    }
+
+    @Test
+    public void TestHigherCompose() {
+
+        Function<Double, Integer> f = a -> (int) (a * 3);
+        Function<Integer, Double> g = a -> a + 2.0;
+
+        assertEquals(Integer.valueOf(9), f.compose(g).apply(1));
+        assertEquals(Integer.valueOf(9), Function.<Integer, Double, Integer>higherCompose().apply(f).apply(g).apply(1));
+    }
+
+    @Test
+    public void TestHigherAndThen() {
+
+        Function<Double, Integer> f = a -> (int) (a * 3);
+        Function<Integer, Double> g = a -> a + 2.0;
+
+        assertEquals(Integer.valueOf(9), g.andThen(f).apply(1));
+        assertEquals(Integer.valueOf(9), Function.<Integer, Double, Integer>higherAndThen().apply(g).apply(f).apply(1));
     }
 }
