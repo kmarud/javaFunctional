@@ -1,12 +1,12 @@
-package chapter3.exercises.e3_1;
+package chapter3.exercises.e3_2;
 
 public interface Result<T> {
 
-    static Failure failure(String message) {
-        return new Failure<String>(message);
+    static <T> Result<T> failure(String message) {
+        return new Failure<>(message);
     }
 
-    static <T> Success success(T value) {
+    static <T> Result<T> success(T value) {
         return new Success<>(value);
     }
 
