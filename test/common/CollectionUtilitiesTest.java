@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static common.CollectionUtilities.*;
 
 public class CollectionUtilitiesTest {
 
@@ -131,5 +132,115 @@ public class CollectionUtilitiesTest {
         List<Integer> workList =  CollectionUtilities.append(list,5);
 
         assertEquals(Integer.valueOf(5), workList.get(4));
+    }
+
+    //fold
+
+    @Test
+    public void testFoldAdding(){
+        List<Integer> list = list(1,2,3,4,5);
+        Function<Integer, Function< Integer, Integer>> f = x -> y -> x + y;
+
+        int value = CollectionUtilities.fold(list, 0, f);
+        assertEquals(15, value);
+    }
+
+    @Test
+    public void testFoldMultiply(){
+        List<Integer> list = list(1,2,3,4,5);
+
+        int value = CollectionUtilities.fold(list, 1, x -> y -> x * y);
+        assertEquals(120, value);
+    }
+
+    // foldLeft
+
+    @Test
+    public void testFoldLeft(){
+        List<Integer> list = list(1,2,3,4,5);
+        String identity = "0";
+        Function<String, Function< Integer, String>> f = x -> y -> addSI(x,y);
+
+        String value = CollectionUtilities.foldLeft(list, identity, f);
+        String expected = "(((((0 + 1) + 2) + 3) + 4) + 5)";
+        assertEquals(expected, value);
+    }
+
+    private String addSI(String s, Integer i){
+        return "(" + s + " + " + i + ")";
+    }
+
+    private String addSI(Integer i, String s){
+        return "(" + i + " + " + s + ")";
+    }
+
+    @Test
+    public void testFoldRight(){
+        List<Integer> list = list(1,2,3,4,5);
+        String identity = "0";
+        Function<Integer, Function<String, String>> f = x -> y -> addSI(x,y);
+
+        String value = CollectionUtilities.foldRight(list, identity, f);
+        String expected = "(1 + (2 + (3 + (4 + (5 + 0)))))";
+        assertEquals(expected, value);
+    }
+
+    @Test
+    public void testFoldRightRecursive(){
+        List<Integer> list = list(1,2,3,4,5);
+        String identity = "0";
+        Function<Integer, Function<String, String>> f = x -> y -> addSI(x,y);
+
+        String value = CollectionUtilities.foldRightRecursive(list, identity, f);
+        String expected = "(1 + (2 + (3 + (4 + (5 + 0)))))";
+        assertEquals(expected, value);
+    }
+
+    //******prepend
+
+    @Test
+    public void testPrepend(){
+        List<Integer> list = Arrays.asList(1,2,3,4);
+        List<Integer> workList =  CollectionUtilities.prepend(list,5);
+
+        assertEquals(Integer.valueOf(5), workList.get(0));
+        assertEquals(Integer.valueOf(1), workList.get(1));
+    }
+
+
+    //********** reverse
+    @Test
+    public void testReverse(){
+        List<Integer> list = Arrays.asList(1,2,3,4);
+        List<Integer> workList =  CollectionUtilities.reverse(list);
+
+        assertEquals(Integer.valueOf(4), workList.get(0));
+        assertEquals(Integer.valueOf(3), workList.get(1));
+        assertEquals(Integer.valueOf(2), workList.get(2));
+        assertEquals(Integer.valueOf(1), workList.get(3));
+    }
+
+    @Test
+    public void mapViaFoldLeftTest() {
+        Function<Integer, Double> f = x -> x * 1.5;
+
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6);
+        List<Double> newList = CollectionUtilities.mapViaFoldLeft(list, f);
+
+        for (int i = 0; i < newList.size(); i++) {
+            assertEquals(newList.get(i), f.apply(list.get(i)), 0.001);
+        }
+    }
+
+    @Test
+    public void mapViaFoldRightTest() {
+        Function<Integer, Double> f = x -> x * 1.5;
+
+        List<Integer> list = Arrays.asList(1, 2, 3, 4, 5, 6);
+        List<Double> newList = CollectionUtilities.mapViaFoldRight(list, f);
+
+        for (int i = 0; i < newList.size(); i++) {
+            assertEquals(newList.get(i), f.apply(list.get(i)), 0.001);
+        }
     }
 }

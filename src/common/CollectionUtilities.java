@@ -55,4 +55,47 @@ public class CollectionUtilities {
         ts.add(t);
         return Collections.unmodifiableList(ts);
     }
+
+    public static Integer fold(List<Integer> list, Integer identity, Function<Integer,Function<Integer, Integer>> f){
+        int result = identity;
+        for (Integer i: list)
+            result = f.apply(result).apply(i);
+        return result;
+    }
+
+    public static<T, U> U foldLeft(List<T> list, U identity, Function<U,Function<T, U>> f){
+        U result = identity;
+        for (T i: list)
+            result = f.apply(result).apply(i);
+        return result;
+    }
+
+    public static<T, U> U foldRight(List<T> list, U identity, Function<T,Function<U, U>> f){
+        U result = identity;
+        for (int i= list.size() ; i > 0; i--)
+            result = f.apply(list.get(i-1)).apply(result);
+        return result;
+    }
+
+    public static<T, U> U foldRightRecursive(List<T> list, U identity, Function<T,Function<U, U>> f){
+       return list.isEmpty()
+               ? identity
+               : f.apply(head(list)).apply(foldRightRecursive(tail(list), identity, f));
+    }
+
+    public static <T> List<T> prepend(List<T> list, T t){
+        return foldLeft(list, list(t), x -> y -> append(x, y));
+    }
+
+    public static <T> List<T> reverse(List<T> list){
+        return foldLeft(list, list(), x -> y -> prepend(x, y));
+    }
+
+    public static <T, U> List<U> mapViaFoldLeft(List<T> list, Function<T, U> f) {
+        return foldLeft(list, list(), x -> y -> append(x, f.apply(y)));
+    }
+
+    public static <T, U> List<U> mapViaFoldRight(List<T> list, Function<T, U> f) {
+        return foldRight(list, list(), x -> y -> prepend(y, f.apply(x)));
+    }
 }
