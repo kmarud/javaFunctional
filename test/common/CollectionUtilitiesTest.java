@@ -243,4 +243,40 @@ public class CollectionUtilitiesTest {
             assertEquals(newList.get(i), f.apply(list.get(i)), 0.001);
         }
     }
+
+    @Test
+    public void testRange() {
+        List<Integer> list = CollectionUtilities.range(1,5);
+        assertEquals(Integer.valueOf(1), list.get(0));
+        assertEquals(Integer.valueOf(2), list.get(1));
+        assertEquals(Integer.valueOf(3), list.get(2));
+        assertEquals(Integer.valueOf(4), list.get(3));
+    }
+
+    @Test
+    public void testUnfold() {
+        List<Integer> list = CollectionUtilities.unfold(1,x -> x+1, x -> x < 5);
+        assertEquals(Integer.valueOf(1), list.get(0));
+        assertEquals(Integer.valueOf(2), list.get(1));
+        assertEquals(Integer.valueOf(3), list.get(2));
+        assertEquals(Integer.valueOf(4), list.get(3));
+    }
+
+    @Test
+    public void testRangeByUnfold() {
+        List<Integer> list = CollectionUtilities.rangeByUnfold(1,5);
+        assertEquals(Integer.valueOf(1), list.get(0));
+        assertEquals(Integer.valueOf(2), list.get(1));
+        assertEquals(Integer.valueOf(3), list.get(2));
+        assertEquals(Integer.valueOf(4), list.get(3));
+    }
+
+    @Test
+    public void testRangeByPrepend() {
+        List<Integer> list = CollectionUtilities.rangeByPrepend(1,5);
+        assertEquals(Integer.valueOf(1), list.get(0));
+        assertEquals(Integer.valueOf(2), list.get(1));
+        assertEquals(Integer.valueOf(3), list.get(2));
+        assertEquals(Integer.valueOf(4), list.get(3));
+    }
 }

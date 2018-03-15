@@ -98,4 +98,34 @@ public class CollectionUtilities {
     public static <T, U> List<U> mapViaFoldRight(List<T> list, Function<T, U> f) {
         return foldRight(list, list(), x -> y -> prepend(y, f.apply(x)));
     }
+
+    public static List<Integer> range(int start, int end){
+        List<Integer> result = new ArrayList<>();
+        int temp = start;
+        while (temp < end){
+            result = append(result, temp);
+            temp++;
+        }
+        return result;
+    }
+
+    public static <T> List<T> unfold(T seed, Function<T,T> f, Function<T, Boolean> p){
+        List<T> result = new ArrayList<>();
+        T temp = seed;
+        while (p.apply(temp)){
+            result = append(result, temp);
+            temp = f.apply(temp);
+        }
+        return result;
+    }
+
+    public static List<Integer> rangeByUnfold(int start, int end){
+        return unfold(start, x -> x+1, x -> x < end);
+    }
+
+    public static List<Integer> rangeByPrepend(Integer start, Integer end){
+        return end <= start
+                ? CollectionUtilities.list()
+                : CollectionUtilities.prepend(range(start +1, end), start);
+    }
 }
